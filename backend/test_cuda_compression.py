@@ -95,9 +95,9 @@ def main():
     print(f"GitHub limit:  {format_size(github_limit)} ({github_limit:,} bytes)")
 
     if original_size > github_limit:
-        print(f"\n⚠️  Original file exceeds GitHub limit by {format_size(original_size - github_limit)}")
+        print(f"\n[WARNING] Original file exceeds GitHub limit by {format_size(original_size - github_limit)}")
     else:
-        print(f"\n✓ Original file is under GitHub limit")
+        print(f"\n[OK] Original file is under GitHub limit")
 
     # Compress
     output_file = cuda_binary.parent / f"{cuda_binary.stem}.7z"
@@ -123,10 +123,10 @@ def main():
     print(f"Space saved: {format_size(original_size - compressed_size)}")
 
     if compressed_size <= github_limit:
-        print(f"\n✅ SUCCESS: Compressed file fits under GitHub's 2GB limit!")
+        print(f"\n[SUCCESS] Compressed file fits under GitHub's 2GB limit!")
         print(f"   Margin: {format_size(github_limit - compressed_size)} remaining")
     else:
-        print(f"\n❌ FAILED: Compressed file still exceeds GitHub limit")
+        print(f"\n[FAILED] Compressed file still exceeds GitHub limit")
         print(f"   Over by: {format_size(compressed_size - github_limit)}")
         print(f"\n   Alternative: Host on external storage (S3, Azure Blob, etc.)")
 
