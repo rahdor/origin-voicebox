@@ -177,9 +177,9 @@ jobs:
 
             ### NVIDIA GPU Acceleration (Windows)
             Windows users with NVIDIA GPUs can enable CUDA for 4-5x faster inference:
-            1. Install the app normally (CPU version)
-            2. The app will detect your GPU and offer to download CUDA support
-            3. Or manually download `voicebox-server-cuda-*.exe` (~3GB) from the assets below
+            1. Install the app normally (CPU version included in installer)
+            2. The app will detect your GPU and offer to download CUDA support automatically
+            3. Or manually download: [voicebox-server-cuda-x86_64-pc-windows-msvc.exe](https://downloads.voicebox.sh/cuda/__VERSION__/voicebox-server-cuda-x86_64-pc-windows-msvc.exe) (~2.4GB)
 
             The app includes automatic updates - future updates will be installed automatically.
           releaseDraft: true
@@ -187,11 +187,26 @@ jobs:
           args: ${{ matrix.args }}
           includeUpdaterJson: true
 
-      - name: Upload CUDA server binary (Windows only)
+      - name: Upload CUDA server to Cloudflare R2 (Windows only)
         if: matrix.platform == 'windows-latest'
-        uses: softprops/action-gh-release@v1
-        with:
-          files: backend/cuda-release/voicebox-server-cuda-*.exe
-          draft: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+        run: |
+          # Install AWS CLI if not available
+          pip install awscli
+
+          # Get version from tag
+          VERSION=${GITHUB_REF#refs/tags/}
+
+          # Get platform tuple
+          PLATFORM=$(rustc --print host-tuple)
+
+          # Upload to R2
+          aws s3 cp backend/cuda-release/voicebox-server-cuda-${PLATFORM}.exe \
+            s3://voicebox-releases/cuda/${VERSION}/voicebox-server-cuda-${PLATFORM}.exe \
+            --endpoint-url $R2_ENDPOINT \
+            --acl public-read
+
+          echo "CUDA binary uploaded to: https://downloads.voicebox.sh/cuda/${VERSION}/voicebox-server-cuda-${PLATFORM}.exe"
