@@ -85,22 +85,25 @@ class BundledProvider:
         """Get provider health status."""
         backend = self._get_backend()
         backend_type = get_backend_type()
-        
+
         model_size = None
         if backend.is_loaded():
             # Try to get current model size from backend
             if hasattr(backend, '_current_model_size') and backend._current_model_size:
                 model_size = backend._current_model_size
-        
+
         device = None
         if backend_type == "mlx":
             device = "metal"
         elif hasattr(backend, 'device'):
             device = backend.device
-        
+
+        # Use apple-mlx for MLX backend, pytorch-cpu for PyTorch
+        provider_name = "apple-mlx" if backend_type == "mlx" else "pytorch-cpu"
+
         return ProviderHealth(
             status="healthy",
-            provider=f"bundled-{backend_type}",
+            provider=provider_name,
             version=None,  # Provider versioning not implemented yet
             model=model_size,
             device=device,

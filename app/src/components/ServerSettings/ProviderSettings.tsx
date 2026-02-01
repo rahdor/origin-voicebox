@@ -172,7 +172,8 @@ export function ProviderSettings() {
   const installedProviders = providersData?.installed || [];
 
   // Determine current active provider
-  const currentProvider = activeProvider?.provider || 'auto';
+  const currentProvider = activeProvider?.provider;
+  console.log('currentProvider', currentProvider);
   const selectedProvider = currentProvider as ProviderType;
 
   return (

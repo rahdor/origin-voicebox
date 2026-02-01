@@ -20,7 +20,7 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=['torch.utils.tensorboard', 'tensorboard', 'triton', 'torch._dynamo', 'torch._inductor', 'torch.testing', 'torch.utils.benchmark', 'IPython', 'matplotlib', 'PIL', 'cv2', 'torchvision', 'torchaudio'],
+    excludes=['torch.utils.tensorboard', 'tensorboard', 'triton', 'torch._dynamo', 'torch._inductor', 'torch.utils.benchmark', 'IPython', 'matplotlib', 'PIL', 'cv2', 'torchvision', 'torchaudio'],
     noarchive=False,
     optimize=0,
 )

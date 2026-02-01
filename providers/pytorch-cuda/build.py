@@ -65,7 +65,6 @@ def build_provider():
         '--exclude-module', 'triton',
         '--exclude-module', 'torch._dynamo',
         '--exclude-module', 'torch._inductor',
-        '--exclude-module', 'torch.testing',
         '--exclude-module', 'torch.utils.benchmark',
         '--exclude-module', 'IPython',
         '--exclude-module', 'matplotlib',
