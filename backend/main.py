@@ -1362,7 +1362,12 @@ async def get_model_status():
                 if asyncio.iscoroutinefunction(check_func):
                     loaded = await check_func()
                 else:
-                    loaded = check_func()
+                    result = check_func()
+                    # Handle lambdas that return coroutines
+                    if asyncio.iscoroutine(result):
+                        loaded = await result
+                    else:
+                        loaded = result
             except Exception:
                 loaded = False
             
@@ -1389,7 +1394,12 @@ async def get_model_status():
                 if asyncio.iscoroutinefunction(check_func):
                     loaded = await check_func()
                 else:
-                    loaded = check_func()
+                    result = check_func()
+                    # Handle lambdas that return coroutines
+                    if asyncio.iscoroutine(result):
+                        loaded = await result
+                    else:
+                        loaded = result
             except Exception:
                 loaded = False
             

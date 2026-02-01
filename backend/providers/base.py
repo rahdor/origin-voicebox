@@ -72,7 +72,7 @@ class TTSProvider(Protocol):
         """
         ...
     
-    async def load_model(self, model_size: str) -> None:
+    async def load_model_async(self, model_size: str) -> None:
         """Load TTS model."""
         ...
     

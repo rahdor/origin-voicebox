@@ -55,14 +55,16 @@ class BundledProvider:
         backend = self._get_backend()
         return await backend.combine_voice_prompts(audio_paths, reference_texts)
     
-    async def load_model(self, model_size: str) -> None:
+    async def load_model_async(self, model_size: str) -> None:
         """Load TTS model."""
         backend = self._get_backend()
-        # Backends use load_model_async, but Protocol defines load_model
         if hasattr(backend, 'load_model_async'):
             await backend.load_model_async(model_size)
         else:
             await backend.load_model(model_size)
+
+    # Alias for compatibility
+    load_model = load_model_async
     
     def unload_model(self) -> None:
         """Unload model to free memory."""

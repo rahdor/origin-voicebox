@@ -115,11 +115,14 @@ class LocalProvider:
         
         return mixed, combined_text
     
-    async def load_model(self, model_size: str) -> None:
+    async def load_model_async(self, model_size: str) -> None:
         """Load TTS model."""
         # Track the requested model size - the provider server will load it
         # when generate() is called with this size
         self._current_model_size = model_size
+
+    # Alias for compatibility
+    load_model = load_model_async
     
     def unload_model(self) -> None:
         """Unload model to free memory."""
