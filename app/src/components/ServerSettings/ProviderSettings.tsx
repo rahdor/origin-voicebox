@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Download, Loader2, Trash2 } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Download01Icon, Loading01Icon, Delete01Icon } from '@hugeicons/core-free-icons';
 import { useCallback, useState } from 'react';
 import {
   AlertDialog,
@@ -155,7 +156,7 @@ export function ProviderSettings() {
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin" />
+            <HugeiconsIcon icon={Loading01Icon} size={24} className="h-6 w-6 animate-spin" />
           </div>
         </CardContent>
       </Card>
@@ -217,10 +218,10 @@ export function ProviderSettings() {
                     disabled={downloadingProvider === 'pytorch-cuda'}
                   >
                     {downloadingProvider === 'pytorch-cuda' ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <HugeiconsIcon icon={Loading01Icon} size={16} className="h-4 w-4 animate-spin" />
                     ) : (
                       <>
-                        <Download className="h-4 w-4 mr-1" />
+                        <HugeiconsIcon icon={Download01Icon} size={16} className="h-4 w-4 mr-1" />
                         Download (2.4GB)
                       </>
                     )}
@@ -241,7 +242,7 @@ export function ProviderSettings() {
                     size="sm"
                     variant="ghost"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <HugeiconsIcon icon={Delete01Icon} size={16} className="h-4 w-4" />
                   </Button>
                 )}
               </div>
@@ -270,10 +271,10 @@ export function ProviderSettings() {
                       disabled={downloadingProvider === 'pytorch-cpu'}
                     >
                       {downloadingProvider === 'pytorch-cpu' ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <HugeiconsIcon icon={Loading01Icon} size={16} className="h-4 w-4 animate-spin" />
                       ) : (
                         <>
-                          <Download className="h-4 w-4 mr-1" />
+                          <HugeiconsIcon icon={Download01Icon} size={16} className="h-4 w-4 mr-1" />
                           Download (300MB)
                         </>
                       )}
@@ -294,7 +295,7 @@ export function ProviderSettings() {
                       size="sm"
                       variant="ghost"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <HugeiconsIcon icon={Delete01Icon} size={16} className="h-4 w-4" />
                     </Button>
                   )}
                 </div>

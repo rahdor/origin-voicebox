@@ -1,6 +1,7 @@
 import { useMatchRoute } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Loader2, MessageSquare, Sparkles } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Loading01Icon, TextSquareIcon, SparklesIcon } from '@hugeicons/core-free-icons';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
@@ -301,9 +302,9 @@ export function FloatingGenerateBox({
                   size="icon"
                 >
                   {isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <HugeiconsIcon icon={Loading01Icon} size={16} className="h-4 w-4 animate-spin" />
                   ) : (
-                    <Sparkles className="h-4 w-4" />
+                    <HugeiconsIcon icon={SparklesIcon} size={16} className="h-4 w-4" />
                   )}
                 </Button>
                 <AnimatePresence>
@@ -327,7 +328,7 @@ export function FloatingGenerateBox({
                             : 'bg-card border border-border hover:bg-background/50',
                         )}
                       >
-                        <MessageSquare className="h-4 w-4" />
+                        <HugeiconsIcon icon={TextSquareIcon} size={16} className="h-4 w-4" />
                       </Button>
                     </motion.div>
                   )}

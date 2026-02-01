@@ -1,4 +1,5 @@
-import { Download, Edit, Mic, Trash2 } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Download01Icon, Edit01Icon, Mic01Icon, Delete01Icon } from '@hugeicons/core-free-icons';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -84,7 +85,7 @@ export function ProfileCard({ profile }: ProfileCardProps) {
                   onError={() => setAvatarError(true)}
                 />
               ) : (
-                <Mic className="h-3.5 w-3.5 text-muted-foreground" />
+                <HugeiconsIcon icon={Mic01Icon} size={14} className="h-3.5 w-3.5 text-muted-foreground" />
               )}
             </div>
             <span className="break-words">{profile.name}</span>
@@ -101,13 +102,13 @@ export function ProfileCard({ profile }: ProfileCardProps) {
           </div>
           <div className="flex gap-0.5 justify-end items-end mt-auto">
             <CircleButton
-              icon={Download}
+              icon={(props) => <HugeiconsIcon icon={Download01Icon} size={14} {...props} />}
               onClick={handleExport}
               disabled={exportProfile.isPending}
               aria-label="Export profile"
             />
             <CircleButton
-              icon={Edit}
+              icon={(props) => <HugeiconsIcon icon={Edit01Icon} size={14} {...props} />}
               onClick={(e) => {
                 e.stopPropagation();
                 handleEdit();
@@ -115,7 +116,7 @@ export function ProfileCard({ profile }: ProfileCardProps) {
               aria-label="Edit profile"
             />
             <CircleButton
-              icon={Trash2}
+              icon={(props) => <HugeiconsIcon icon={Delete01Icon} size={14} {...props} />}
               onClick={handleDeleteClick}
               disabled={deleteProfile.isPending}
               aria-label="Delete profile"

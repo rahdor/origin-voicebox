@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import { MoreHorizontal } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { MoreHorizontalIcon } from '@hugeicons/core-free-icons';
 import { cn } from '@/lib/utils/cn';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
@@ -26,7 +27,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
     {...props}
   >
     {children}
-    <MoreHorizontal className="ml-auto h-4 w-4" />
+    <HugeiconsIcon icon={MoreHorizontalIcon} size={16} className="ml-auto h-4 w-4" />
   </DropdownMenuPrimitive.SubTrigger>
 ));
 DropdownMenuSubTrigger.displayName = DropdownMenuPrimitive.SubTrigger.displayName;
@@ -97,7 +98,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator>
-        <MoreHorizontal className="h-4 w-4" />
+        <HugeiconsIcon icon={MoreHorizontalIcon} size={16} className="h-4 w-4" />
       </DropdownMenuPrimitive.ItemIndicator>
     </span>
     {children}
@@ -119,7 +120,7 @@ const DropdownMenuRadioItem = React.forwardRef<
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator>
-        <MoreHorizontal className="h-2 w-2 fill-current" />
+        <HugeiconsIcon icon={MoreHorizontalIcon} size={8} className="h-2 w-2 fill-current" />
       </DropdownMenuPrimitive.ItemIndicator>
     </span>
     {children}

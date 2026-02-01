@@ -1,4 +1,5 @@
-import { Loader2, XCircle } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Loading01Icon, CancelCircleIcon } from '@hugeicons/core-free-icons';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -74,10 +75,10 @@ export function ModelProgress({ modelName, displayName, isDownloading = false }:
   const getStatusIcon = () => {
     switch (progress.status) {
       case 'error':
-        return <XCircle className="h-4 w-4 text-destructive" />;
+        return <HugeiconsIcon icon={CancelCircleIcon} size={16} className="h-4 w-4 text-destructive" />;
       case 'downloading':
       case 'extracting':
-        return <Loader2 className="h-4 w-4 animate-spin" />;
+        return <HugeiconsIcon icon={Loading01Icon} size={16} className="h-4 w-4 animate-spin" />;
       default:
         return null;
     }

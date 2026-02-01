@@ -1,4 +1,5 @@
-import { Plus, BookOpen, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Add01Icon, Book01Icon, MoreHorizontalIcon, PencilIcon, Delete01Icon } from '@hugeicons/core-free-icons';
 import { useState } from 'react';
 import {
   AlertDialog,
@@ -177,7 +178,7 @@ export function StoryList() {
       <div className="flex items-center justify-between mb-4 px-1">
         <h2 className="text-2xl font-bold">Stories</h2>
         <Button onClick={() => setCreateDialogOpen(true)} size="sm">
-          <Plus className="mr-2 h-4 w-4" />
+          <HugeiconsIcon icon={Add01Icon} size={16} className="mr-2 h-4 w-4" />
           New Story
         </Button>
       </div>
@@ -186,7 +187,7 @@ export function StoryList() {
       <div className="flex-1 min-h-0 overflow-y-auto space-y-2">
         {storyList.length === 0 ? (
           <div className="text-center py-12 px-5 border-2 border-dashed border-muted rounded-2xl text-muted-foreground">
-            <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <HugeiconsIcon icon={Book01Icon} size={48} className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p className="text-sm">No stories yet</p>
             <p className="text-xs mt-2">Create your first story to get started</p>
           </div>
@@ -227,19 +228,19 @@ export function StoryList() {
                       className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <MoreHorizontal className="h-4 w-4" />
+                      <HugeiconsIcon icon={MoreHorizontalIcon} size={16} className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => handleEditClick(story)}>
-                      <Pencil className="mr-2 h-4 w-4" />
+                      <HugeiconsIcon icon={PencilIcon} size={16} className="mr-2 h-4 w-4" />
                       Edit
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => handleDeleteClick(story.id)}
                       className="text-destructive focus:text-destructive"
                     >
-                      <Trash2 className="mr-2 h-4 w-4" />
+                      <HugeiconsIcon icon={Delete01Icon} size={16} className="mr-2 h-4 w-4" />
                       Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>

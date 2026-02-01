@@ -1,4 +1,5 @@
-import { Loader2, XCircle } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Loading01Icon, CancelCircleIcon } from '@hugeicons/core-free-icons';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useServerHealth } from '@/lib/hooks/useServer';
@@ -32,12 +33,12 @@ export function ServerStatus() {
 
         {isLoading ? (
           <div className="flex items-center gap-2">
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <HugeiconsIcon icon={Loading01Icon} size={16} className="h-4 w-4 animate-spin" />
             <span className="text-sm">Checking connection...</span>
           </div>
         ) : error ? (
           <div className="flex items-center gap-2">
-            <XCircle className="h-4 w-4 text-destructive" />
+            <HugeiconsIcon icon={CancelCircleIcon} size={16} className="h-4 w-4 text-destructive" />
             <span className="text-sm text-destructive">Connection failed: {error.message}</span>
           </div>
         ) : health ? (

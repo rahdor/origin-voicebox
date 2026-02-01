@@ -1,6 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Mic, MoreHorizontal, Play, Trash2 } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { DragDropVerticalIcon, Mic01Icon, MoreHorizontalIcon, PlayIcon, Delete01Icon } from '@hugeicons/core-free-icons';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -74,7 +75,7 @@ export function StoryChatItem({
           className="shrink-0 cursor-grab active:cursor-grabbing touch-none text-muted-foreground hover:text-foreground transition-colors"
           {...dragHandleProps}
         >
-          <GripVertical className="h-5 w-5" />
+          <HugeiconsIcon icon={DragDropVerticalIcon} size={20} className="h-5 w-5" />
         </button>
       )}
 
@@ -92,7 +93,7 @@ export function StoryChatItem({
               onError={() => setAvatarError(true)}
             />
           ) : (
-            <Mic className="h-5 w-5 text-muted-foreground" />
+            <HugeiconsIcon icon={Mic01Icon} size={20} className="h-5 w-5 text-muted-foreground" />
           )}
         </div>
       </div>
@@ -119,16 +120,16 @@ export function StoryChatItem({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Actions">
-              <MoreHorizontal className="h-4 w-4" />
+              <HugeiconsIcon icon={MoreHorizontalIcon} size={16} className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={handlePlay}>
-              <Play className="mr-2 h-4 w-4" />
+              <HugeiconsIcon icon={PlayIcon} size={16} className="mr-2 h-4 w-4" />
               Play from here
             </DropdownMenuItem>
             <DropdownMenuItem onClick={onRemove} className="text-destructive focus:text-destructive">
-              <Trash2 className="mr-2 h-4 w-4" />
+              <HugeiconsIcon icon={Delete01Icon} size={16} className="mr-2 h-4 w-4" />
               Remove from Story
             </DropdownMenuItem>
           </DropdownMenuContent>

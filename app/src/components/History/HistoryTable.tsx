@@ -1,12 +1,13 @@
+import { HugeiconsIcon } from '@hugeicons/react';
 import {
-  AudioWaveform,
-  Download,
-  FileArchive,
-  Loader2,
-  MoreHorizontal,
-  Play,
-  Trash2,
-} from 'lucide-react';
+  WaveIcon,
+  Download01Icon,
+  Archive01Icon,
+  Loading01Icon,
+  MoreHorizontalIcon,
+  PlayIcon,
+  Delete01Icon,
+} from '@hugeicons/core-free-icons';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -222,7 +223,7 @@ export function HistoryTable() {
   if (isLoading && page === 0) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <HugeiconsIcon icon={Loading01Icon} size={32} className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -268,7 +269,7 @@ export function HistoryTable() {
                 >
                   {/* Waveform icon */}
                   <div className="flex items-center shrink-0">
-                    <AudioWaveform className="h-5 w-5 text-muted-foreground" />
+                    <HugeiconsIcon icon={WaveIcon} size={20} className="h-5 w-5 text-muted-foreground" />
                   </div>
 
                   {/* Left side - Meta information */}
@@ -310,28 +311,28 @@ export function HistoryTable() {
                           className="h-8 w-8"
                           aria-label="Actions"
                         >
-                          <MoreHorizontal className="h-4 w-4" />
+                          <HugeiconsIcon icon={MoreHorizontalIcon} size={16} className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
                           onClick={() => handlePlay(gen.id, gen.text, gen.profile_id)}
                         >
-                          <Play className="mr-2 h-4 w-4" />
+                          <HugeiconsIcon icon={PlayIcon} size={16} className="mr-2 h-4 w-4" />
                           Play
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleDownloadAudio(gen.id, gen.text)}
                           disabled={exportGenerationAudio.isPending}
                         >
-                          <Download className="mr-2 h-4 w-4" />
+                          <HugeiconsIcon icon={Download01Icon} size={16} className="mr-2 h-4 w-4" />
                           Export Audio
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleExportPackage(gen.id, gen.text)}
                           disabled={exportGeneration.isPending}
                         >
-                          <FileArchive className="mr-2 h-4 w-4" />
+                          <HugeiconsIcon icon={Archive01Icon} size={16} className="mr-2 h-4 w-4" />
                           Export Package
                         </DropdownMenuItem>
                         <DropdownMenuItem
@@ -339,7 +340,7 @@ export function HistoryTable() {
                           disabled={deleteGeneration.isPending}
                           className="text-destructive focus:text-destructive"
                         >
-                          <Trash2 className="mr-2 h-4 w-4" />
+                          <HugeiconsIcon icon={Delete01Icon} size={16} className="mr-2 h-4 w-4" />
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -352,7 +353,7 @@ export function HistoryTable() {
             {/* Load more trigger element */}
             {hasMore && (
               <div ref={loadMoreRef} className="flex items-center justify-center py-4">
-                {isFetching && <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />}
+                {isFetching && <HugeiconsIcon icon={Loading01Icon} size={24} className="h-6 w-6 animate-spin text-muted-foreground" />}
               </div>
             )}
 
