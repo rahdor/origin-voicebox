@@ -59,15 +59,20 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
 
-      - name: Install Python dependencies (CPU)
-        if: matrix.provider == 'pytorch-cpu'
+      - name: Install CPU-only torch (Linux)
+        if: matrix.provider == 'pytorch-cpu' && matrix.platform == 'ubuntu-22.04'
         run: |
           python -m pip install --upgrade pip
           pip install pyinstaller
-          # Install CPU-only torch on Linux to avoid CUDA bloat
-          if [ "${{ matrix.platform }}" == "ubuntu-22.04" ]; then
-            pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-          fi
+          pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+          pip install -r providers/pytorch-cpu/requirements.txt
+          pip install -r backend/requirements.txt
+
+      - name: Install Python dependencies (CPU - non-Linux)
+        if: matrix.provider == 'pytorch-cpu' && matrix.platform != 'ubuntu-22.04'
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
           pip install -r providers/pytorch-cpu/requirements.txt
           pip install -r backend/requirements.txt
 
