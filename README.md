@@ -80,28 +80,35 @@ Download a voice model, clone any voice from a few seconds of audio, and compose
 
 | Platform              | Download                                                                                                                    |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| macOS (Apple Silicon) | [voicebox_aarch64.app.tar.gz](https://github.com/jamiepine/voicebox/releases/download/v0.1.0/voicebox_aarch64.app.tar.gz)   |
-| macOS (Intel)         | [voicebox_x64.app.tar.gz](https://github.com/jamiepine/voicebox/releases/download/v0.1.0/voicebox_x64.app.tar.gz)           |
-| Windows (MSI)         | [voicebox_0.1.0_x64_en-US.msi](https://github.com/jamiepine/voicebox/releases/download/v0.1.0/voicebox_0.1.0_x64_en-US.msi) |
-| Windows (Setup)       | [voicebox_0.1.0_x64-setup.exe](https://github.com/jamiepine/voicebox/releases/download/v0.1.0/voicebox_0.1.0_x64-setup.exe) |
+| macOS (Apple Silicon) | [Download latest release](https://github.com/jamiepine/voicebox/releases/latest)   |
+| macOS (Intel)         | [Download latest release](https://github.com/jamiepine/voicebox/releases/latest)           |
+| Windows (MSI)         | [Download latest release](https://github.com/jamiepine/voicebox/releases/latest) |
+| Windows (Setup)       | [Download latest release](https://github.com/jamiepine/voicebox/releases/latest) |
+| Linux (AppImage)      | [Download latest release](https://github.com/jamiepine/voicebox/releases/latest) |
+| Linux (Deb)           | [Download latest release](https://github.com/jamiepine/voicebox/releases/latest) |
 
-> **Linux desktop builds coming soon** — Currently blocked by GitHub runner disk space limitations.
+### Docker
 
-### Docker (Server Deployment)
-
-Run Voicebox with the web UI in Docker:
+Run Voicebox with the web UI in Docker - perfect for servers and headless deployments:
 
 ```bash
 # CPU-only (supports amd64 and arm64)
 docker run -p 8000:8000 -v voicebox-data:/app/data \
   ghcr.io/jamiepine/voicebox:latest
 
-# NVIDIA GPU
+# NVIDIA GPU (recommended for performance)
 docker run --gpus all -p 8000:8000 -v voicebox-data:/app/data \
   ghcr.io/jamiepine/voicebox:latest-cuda
 ```
 
-See [Docker Deployment Guide](docs/plans/DOCKER_DEPLOYMENT.md) for full documentation.
+Or use Docker Compose:
+```bash
+docker compose up -d
+```
+
+Open http://localhost:8000 to access the web UI.
+
+See [Docker Deployment Guide](docs/overview/docker.mdx) for cloud deployments, GPU setup, and more.
 
 ---
 
@@ -153,9 +160,10 @@ Create multi-voice narratives, podcasts, and conversations with a timeline-based
 
 ### Flexible Deployment
 
-- **Local mode** — Everything runs on your machine
-- **Remote mode** — Connect to a GPU server on your network
-- **One-click server** — Turn any machine into a Voicebox server
+- **Desktop app** — Native apps for macOS, Windows, and Linux
+- **Docker** — Deploy to servers with the web UI included
+- **Remote mode** — Connect desktop app to a remote GPU server
+- **Cloud ready** — Deploy to AWS, GCP, DigitalOcean, or any cloud provider
 
 ---
 
