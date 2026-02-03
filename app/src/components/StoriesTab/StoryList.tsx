@@ -1,6 +1,6 @@
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Add01Icon, Book01Icon, MoreHorizontalIcon, PencilIcon, Delete01Icon } from '@hugeicons/core-free-icons';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,7 +30,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import { useStories, useCreateStory, useUpdateStory, useDeleteStory } from '@/lib/hooks/useStories';
+import { useStories, useCreateStory, useUpdateStory, useDeleteStory, useStory } from '@/lib/hooks/useStories';
 import { cn } from '@/lib/utils/cn';
 import { formatDate } from '@/lib/utils/format';
 import { useStoryStore } from '@/stores/storyStore';
@@ -39,6 +39,8 @@ export function StoryList() {
   const { data: stories, isLoading } = useStories();
   const selectedStoryId = useStoryStore((state) => state.selectedStoryId);
   const setSelectedStoryId = useStoryStore((state) => state.setSelectedStoryId);
+  const trackEditorHeight = useStoryStore((state) => state.trackEditorHeight);
+  const { data: currentStory } = useStory(selectedStoryId);
   const createStory = useCreateStory();
   const updateStory = useUpdateStory();
   const deleteStory = useDeleteStory();
@@ -54,6 +56,16 @@ export function StoryList() {
   const [newStoryName, setNewStoryName] = useState('');
   const [newStoryDescription, setNewStoryDescription] = useState('');
   const { toast } = useToast();
+
+  // Calculate bottom padding to account for FloatingGenerateBox and StoryTrackEditor
+  const hasTrackEditor = currentStory && currentStory.items.length > 0;
+  const bottomPadding = useMemo(() => {
+    // FloatingGenerateBox height (~100px) + gap (24px)
+    const generateBoxHeight = 124;
+    // Track editor height when visible
+    const editorHeight = hasTrackEditor ? trackEditorHeight + 24 : 0;
+    return generateBoxHeight + editorHeight;
+  }, [hasTrackEditor, trackEditorHeight]);
 
   const handleCreateStory = () => {
     if (!newStoryName.trim()) {
@@ -184,7 +196,10 @@ export function StoryList() {
       </div>
 
       {/* Story List */}
-      <div className="flex-1 min-h-0 overflow-y-auto space-y-2">
+      <div 
+        className="flex-1 min-h-0 overflow-y-auto space-y-2"
+        style={{ paddingBottom: `${bottomPadding}px` }}
+      >
         {storyList.length === 0 ? (
           <div className="text-center py-12 px-5 border-2 border-dashed border-muted rounded-2xl text-muted-foreground">
             <HugeiconsIcon icon={Book01Icon} size={48} className="h-12 w-12 mx-auto mb-4 opacity-50" />
