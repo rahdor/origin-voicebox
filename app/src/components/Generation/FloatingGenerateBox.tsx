@@ -300,7 +300,7 @@ export function FloatingGenerateBox({
                   <Button
                     type="submit"
                     disabled={isPending || !selectedProfileId}
-                    className="h-10 w-10 rounded-full bg-accent hover:bg-accent/90 hover:scale-105 text-accent-foreground shadow-lg hover:shadow-accent/50 transition-all duration-200"
+                    className="h-10 w-10 rounded-full bg-accent hover:bg-accent/90 hover:scale-105 text-accent-foreground shadow-lg transition-all duration-200"
                     size="icon"
                   >
                     {isPending ? (

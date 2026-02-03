@@ -347,7 +347,6 @@ export function HistoryTable() {
                         <DropdownMenuItem
                           onClick={() => handleDeleteClick(gen.id, gen.profile_name)}
                           disabled={deleteGeneration.isPending}
-                          className="text-destructive focus:text-destructive"
                         >
                           <HugeiconsIcon icon={Delete01Icon} size={16} className="mr-2 h-4 w-4" />
                           Delete
