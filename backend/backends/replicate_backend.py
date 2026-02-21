@@ -113,18 +113,21 @@ class ReplicateTTSBackend:
         if not self._loaded:
             await self.load_model_async()
 
+        # Validate voice_prompt has required audio data
+        if not voice_prompt.get("audio_base64"):
+            raise ValueError("Reference audio is required for voice_clone mode")
+
+        mime_type = voice_prompt.get("audio_mime_type", "audio/wav")
+        audio_uri = f"data:{mime_type};base64,{voice_prompt['audio_base64']}"
+
         input_data = {
             "text": text,
-            "mode": "clone",
+            "mode": "voice_clone",
+            "voice_audio": audio_uri,
         }
 
-        if voice_prompt.get("audio_base64"):
-            mime_type = voice_prompt.get("audio_mime_type", "audio/wav")
-            audio_uri = f"data:{mime_type};base64,{voice_prompt['audio_base64']}"
-            input_data["voice_audio"] = audio_uri
-
-            if voice_prompt.get("reference_text"):
-                input_data["voice_text"] = voice_prompt["reference_text"]
+        if voice_prompt.get("reference_text"):
+            input_data["voice_text"] = voice_prompt["reference_text"]
 
         if seed is not None:
             input_data["seed"] = seed
