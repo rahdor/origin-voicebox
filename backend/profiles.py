@@ -374,11 +374,10 @@ async def create_voice_prompt_for_profile(
     if len(samples) == 1:
         # Single sample - use directly
         sample = samples[0]
-        audio_path = Path(sample.audio_path)
 
-        # For cloud deployments with ephemeral filesystems, use stored audio_data
-        if not audio_path.exists() and sample.audio_data:
-            # Build voice_prompt directly from stored base64 data
+        # For cloud deployments, prefer stored audio_data over file path
+        # This handles ephemeral filesystems where files may not persist
+        if sample.audio_data:
             voice_prompt = {
                 "audio_base64": sample.audio_data,
                 "audio_mime_type": "audio/wav",
@@ -387,6 +386,7 @@ async def create_voice_prompt_for_profile(
             }
             return voice_prompt
 
+        # Fallback to file-based approach for local deployments
         voice_prompt, _ = await tts_model.create_voice_prompt(
             sample.audio_path,
             sample.reference_text,
