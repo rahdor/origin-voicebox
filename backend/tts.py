@@ -7,7 +7,10 @@ import numpy as np
 import io
 import soundfile as sf
 
-from .backends import get_tts_backend, TTSBackend
+try:
+    from .backends import get_tts_backend, TTSBackend
+except ImportError:
+    from backends import get_tts_backend, TTSBackend
 
 
 def get_tts_model() -> TTSBackend:

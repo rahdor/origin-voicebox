@@ -14,21 +14,37 @@ from datetime import datetime
 import asyncio
 import uvicorn
 import argparse
-import torch
 import tempfile
 import io
 from pathlib import Path
 import uuid
-import asyncio
 import signal
 import os
 
-from . import database, models, profiles, history, tts, transcribe, config, export_import, channels, stories, __version__
-from .database import get_db, Generation as DBGeneration, VoiceProfile as DBVoiceProfile
-from .utils.progress import get_progress_manager
-from .utils.tasks import get_task_manager
-from .utils.cache import clear_voice_prompt_cache
-from .platform_detect import get_backend_type
+# torch is optional - not needed for Replicate backend
+try:
+    import torch
+    HAS_TORCH = True
+except ImportError:
+    torch = None
+    HAS_TORCH = False
+
+# Support both package imports (local dev) and direct imports (cloud deployment)
+try:
+    from . import database, models, profiles, history, tts, transcribe, config, export_import, channels, stories, __version__
+    from .database import get_db, Generation as DBGeneration, VoiceProfile as DBVoiceProfile
+    from .utils.progress import get_progress_manager
+    from .utils.tasks import get_task_manager
+    from .utils.cache import clear_voice_prompt_cache
+    from .platform_detect import get_backend_type
+except ImportError:
+    import database, models, profiles, history, tts, transcribe, config, export_import, channels, stories
+    from database import get_db, Generation as DBGeneration, VoiceProfile as DBVoiceProfile
+    from utils.progress import get_progress_manager
+    from utils.tasks import get_task_manager
+    from utils.cache import clear_voice_prompt_cache
+    from platform_detect import get_backend_type
+    __version__ = "0.1.0"
 
 app = FastAPI(
     title="voicebox API",
@@ -70,59 +86,68 @@ async def shutdown():
 @app.get("/health", response_model=models.HealthResponse)
 async def health():
     """Health check endpoint."""
-    from huggingface_hub import hf_hub_download, constants as hf_constants
     from pathlib import Path
-    import os
 
     tts_model = tts.get_tts_model()
     backend_type = get_backend_type()
 
-    # Check for GPU availability (CUDA or MPS)
-    has_cuda = torch.cuda.is_available()
-    has_mps = hasattr(torch.backends, 'mps') and torch.backends.mps.is_available()
+    # For Replicate backend, GPU is handled remotely
+    if backend_type == "replicate":
+        return models.HealthResponse(
+            status="healthy",
+            model_loaded=True,
+            model_downloaded=True,
+            model_size="1.7b",
+            gpu_available=True,
+            gpu_type="Replicate Cloud GPU",
+            vram_used_mb=None,
+            backend_type=backend_type,
+        )
+
+    # Check for GPU availability (CUDA or MPS) - only if torch available
+    has_cuda = False
+    has_mps = False
+    vram_used = None
+
+    if HAS_TORCH and torch is not None:
+        has_cuda = torch.cuda.is_available()
+        has_mps = hasattr(torch.backends, 'mps') and torch.backends.mps.is_available()
+        if has_cuda:
+            vram_used = torch.cuda.memory_allocated() / 1024 / 1024  # MB
+
     gpu_available = has_cuda or has_mps
 
     gpu_type = None
-    if has_cuda:
+    if has_cuda and torch is not None:
         gpu_type = f"CUDA ({torch.cuda.get_device_name(0)})"
     elif has_mps:
         gpu_type = "MPS (Apple Silicon)"
     elif backend_type == "mlx":
         gpu_type = "Metal (Apple Silicon via MLX)"
 
-    vram_used = None
-    if has_cuda:
-        vram_used = torch.cuda.memory_allocated() / 1024 / 1024  # MB
-    
-    # Check if model is loaded - use the same logic as model status endpoint
+    # Check if model is loaded
     model_loaded = False
     model_size = None
     try:
-        # Use the same check as model status endpoint
         if tts_model.is_loaded():
             model_loaded = True
-            # Get the actual loaded model size
-            # Check _current_model_size first (more reliable for actually loaded models)
             model_size = getattr(tts_model, '_current_model_size', None)
             if not model_size:
-                # Fallback to model_size attribute (which should be set when model loads)
                 model_size = getattr(tts_model, 'model_size', None)
     except Exception:
-        # If there's an error checking, assume not loaded
         model_loaded = False
         model_size = None
-    
+
     # Check if default model is downloaded (cached)
     model_downloaded = None
     try:
-        # Check if the default model (1.7B) is cached
-        # Use different model IDs based on backend
+        from huggingface_hub import constants as hf_constants
+
         if backend_type == "mlx":
             default_model_id = "mlx-community/Qwen3-TTS-12Hz-1.7B-Base-bf16"
         else:
             default_model_id = "Qwen/Qwen3-TTS-12Hz-1.7B-Base"
-        
-        # Method 1: Try scan_cache_dir if available
+
         try:
             from huggingface_hub import scan_cache_dir
             cache_info = scan_cache_dir()
@@ -131,7 +156,6 @@ async def health():
                     model_downloaded = True
                     break
         except (ImportError, Exception):
-            # Method 2: Check cache directory (using HuggingFace's OS-specific cache location)
             cache_dir = hf_constants.HF_HUB_CACHE
             repo_cache = Path(cache_dir) / ("models--" + default_model_id.replace("/", "--"))
             if repo_cache.exists():
@@ -140,7 +164,7 @@ async def health():
                     any(repo_cache.rglob("*.safetensors")) or
                     any(repo_cache.rglob("*.pt")) or
                     any(repo_cache.rglob("*.pth")) or
-                    any(repo_cache.rglob("*.npz"))  # MLX models may use npz
+                    any(repo_cache.rglob("*.npz"))
                 )
                 model_downloaded = has_model_files
     except Exception:
@@ -1641,11 +1665,14 @@ async def get_active_tasks():
 def _get_gpu_status() -> str:
     """Get GPU availability status."""
     backend_type = get_backend_type()
-    if torch.cuda.is_available():
-        return f"CUDA ({torch.cuda.get_device_name(0)})"
-    elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
-        return "MPS (Apple Silicon)"
-    elif backend_type == "mlx":
+    if backend_type == "replicate":
+        return "Replicate Cloud GPU"
+    if HAS_TORCH and torch is not None:
+        if torch.cuda.is_available():
+            return f"CUDA ({torch.cuda.get_device_name(0)})"
+        elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+            return "MPS (Apple Silicon)"
+    if backend_type == "mlx":
         return "Metal (Apple Silicon via MLX)"
     return "None (CPU only)"
 

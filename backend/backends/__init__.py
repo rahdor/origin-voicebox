@@ -1,14 +1,17 @@
 """
 Backend abstraction layer for TTS and STT.
 
-Provides a unified interface for MLX and PyTorch backends.
+Provides a unified interface for MLX, PyTorch, and Replicate backends.
 """
 
 from typing import Protocol, Optional, Tuple, List
 from typing_extensions import runtime_checkable
 import numpy as np
 
-from ..platform_detect import get_backend_type
+try:
+    from ..platform_detect import get_backend_type
+except ImportError:
+    from platform_detect import get_backend_type
 
 
 @runtime_checkable
@@ -118,44 +121,50 @@ _stt_backend: Optional[STTBackend] = None
 def get_tts_backend() -> TTSBackend:
     """
     Get or create TTS backend instance based on platform.
-    
+
     Returns:
-        TTS backend instance (MLX or PyTorch)
+        TTS backend instance (Replicate, MLX, or PyTorch)
     """
     global _tts_backend
-    
+
     if _tts_backend is None:
         backend_type = get_backend_type()
-        
-        if backend_type == "mlx":
+
+        if backend_type == "replicate":
+            from .replicate_backend import ReplicateTTSBackend
+            _tts_backend = ReplicateTTSBackend()
+        elif backend_type == "mlx":
             from .mlx_backend import MLXTTSBackend
             _tts_backend = MLXTTSBackend()
         else:
             from .pytorch_backend import PyTorchTTSBackend
             _tts_backend = PyTorchTTSBackend()
-    
+
     return _tts_backend
 
 
 def get_stt_backend() -> STTBackend:
     """
     Get or create STT backend instance based on platform.
-    
+
     Returns:
-        STT backend instance (MLX or PyTorch)
+        STT backend instance (Replicate, MLX, or PyTorch)
     """
     global _stt_backend
-    
+
     if _stt_backend is None:
         backend_type = get_backend_type()
-        
-        if backend_type == "mlx":
+
+        if backend_type == "replicate":
+            from .replicate_backend import ReplicateSTTBackend
+            _stt_backend = ReplicateSTTBackend()
+        elif backend_type == "mlx":
             from .mlx_backend import MLXSTTBackend
             _stt_backend = MLXSTTBackend()
         else:
             from .pytorch_backend import PyTorchSTTBackend
             _stt_backend = PyTorchSTTBackend()
-    
+
     return _stt_backend
 
 

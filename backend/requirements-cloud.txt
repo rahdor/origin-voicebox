@@ -1,0 +1,25 @@
+# Requirements for cloud deployment (Replicate backend)
+# No heavy ML deps needed - Replicate handles inference
+
+# FastAPI and server
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.0
+
+# Database
+sqlalchemy>=2.0.0
+alembic>=1.13.0
+
+# Replicate SDK
+replicate>=0.25.0
+httpx>=0.27.0
+
+# Audio processing (lightweight)
+librosa>=0.10.0
+soundfile>=0.12.0
+numpy>=1.24.0
+
+# Utilities
+python-multipart>=0.0.6
+Pillow>=10.0.0
+python-dotenv>=1.0.0
