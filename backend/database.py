@@ -34,11 +34,13 @@ class VoiceProfile(Base):
 class ProfileSample(Base):
     """Voice profile sample database model."""
     __tablename__ = "profile_samples"
-    
+
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     profile_id = Column(String, ForeignKey("profiles.id"), nullable=False)
     audio_path = Column(String, nullable=False)
     reference_text = Column(Text, nullable=False)
+    # Store audio as base64 for cloud deployments with ephemeral filesystems
+    audio_data = Column(Text, nullable=True)
 
 
 class Generation(Base):

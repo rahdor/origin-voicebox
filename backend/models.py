@@ -44,6 +44,7 @@ class ProfileSampleResponse(BaseModel):
     profile_id: str
     audio_path: str
     reference_text: str
+    audio_data: Optional[str] = None  # Base64-encoded audio for cloud deployments
 
     class Config:
         from_attributes = True

@@ -122,13 +122,19 @@ async def add_profile_sample(
     dest_path = profile_dir / f"{sample_id}.wav"
     audio, sr = load_audio(audio_path)
     save_audio(audio, str(dest_path), sr)
-    
+
+    # Also store audio as base64 for cloud deployments with ephemeral filesystems
+    import base64
+    with open(str(dest_path), "rb") as f:
+        audio_base64 = base64.b64encode(f.read()).decode("utf-8")
+
     # Create database entry
     db_sample = DBProfileSample(
         id=sample_id,
         profile_id=profile_id,
         audio_path=str(dest_path),
         reference_text=reference_text,
+        audio_data=audio_base64,
     )
     
     db.add(db_sample)
@@ -368,6 +374,19 @@ async def create_voice_prompt_for_profile(
     if len(samples) == 1:
         # Single sample - use directly
         sample = samples[0]
+        audio_path = Path(sample.audio_path)
+
+        # For cloud deployments with ephemeral filesystems, use stored audio_data
+        if not audio_path.exists() and sample.audio_data:
+            # Build voice_prompt directly from stored base64 data
+            voice_prompt = {
+                "audio_base64": sample.audio_data,
+                "audio_mime_type": "audio/wav",
+                "reference_text": sample.reference_text,
+                "backend": "replicate",
+            }
+            return voice_prompt
+
         voice_prompt, _ = await tts_model.create_voice_prompt(
             sample.audio_path,
             sample.reference_text,
