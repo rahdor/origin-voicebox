@@ -7,19 +7,35 @@ from datetime import datetime
 import uuid
 from sqlalchemy.orm import Session
 
-from .models import (
-    AudioChannelCreate,
-    AudioChannelUpdate,
-    AudioChannelResponse,
-    ChannelVoiceAssignment,
-    ProfileChannelAssignment,
-)
-from .database import (
-    AudioChannel as DBAudioChannel,
-    ChannelDeviceMapping as DBChannelDeviceMapping,
-    ProfileChannelMapping as DBProfileChannelMapping,
-    VoiceProfile as DBVoiceProfile,
-)
+# Support both package imports (local dev) and direct imports (cloud deployment)
+try:
+    from .models import (
+        AudioChannelCreate,
+        AudioChannelUpdate,
+        AudioChannelResponse,
+        ChannelVoiceAssignment,
+        ProfileChannelAssignment,
+    )
+    from .database import (
+        AudioChannel as DBAudioChannel,
+        ChannelDeviceMapping as DBChannelDeviceMapping,
+        ProfileChannelMapping as DBProfileChannelMapping,
+        VoiceProfile as DBVoiceProfile,
+    )
+except ImportError:
+    from models import (
+        AudioChannelCreate,
+        AudioChannelUpdate,
+        AudioChannelResponse,
+        ChannelVoiceAssignment,
+        ProfileChannelAssignment,
+    )
+    from database import (
+        AudioChannel as DBAudioChannel,
+        ChannelDeviceMapping as DBChannelDeviceMapping,
+        ProfileChannelMapping as DBProfileChannelMapping,
+        VoiceProfile as DBVoiceProfile,
+    )
 
 
 async def list_channels(db: Session) -> List[AudioChannelResponse]:

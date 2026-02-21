@@ -10,9 +10,15 @@ from pathlib import Path
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 
-from .models import GenerationRequest, GenerationResponse, HistoryQuery, HistoryResponse, HistoryListResponse
-from .database import Generation as DBGeneration, VoiceProfile as DBVoiceProfile
-from . import config
+# Support both package imports (local dev) and direct imports (cloud deployment)
+try:
+    from .models import GenerationRequest, GenerationResponse, HistoryQuery, HistoryResponse, HistoryListResponse
+    from .database import Generation as DBGeneration, VoiceProfile as DBVoiceProfile
+    from . import config
+except ImportError:
+    from models import GenerationRequest, GenerationResponse, HistoryQuery, HistoryResponse, HistoryListResponse
+    from database import Generation as DBGeneration, VoiceProfile as DBVoiceProfile
+    import config
 
 
 def _get_generations_dir() -> Path:

@@ -1180,10 +1180,26 @@ async def get_model_progress(model_name: str):
 @app.get("/models/status", response_model=models.ModelStatusListResponse)
 async def get_model_status():
     """Get status of all available models."""
-    from huggingface_hub import constants as hf_constants
     from pathlib import Path
-    
+
     backend_type = get_backend_type()
+
+    # For Replicate backend, models are hosted remotely - no local status needed
+    if backend_type == "replicate":
+        return models.ModelStatusListResponse(
+            models=[
+                models.ModelStatus(
+                    model_name="qwen-tts-1.7B",
+                    display_name="Qwen TTS 1.7B (Replicate)",
+                    downloaded=True,
+                    downloading=False,
+                    loaded=True,
+                    size_mb=None,
+                ),
+            ]
+        )
+
+    from huggingface_hub import constants as hf_constants
     task_manager = get_task_manager()
     
     # Get set of currently downloading model names

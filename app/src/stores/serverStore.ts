@@ -1,6 +1,16 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+// Use environment variable for API URL, fallback to localhost for desktop app
+const getDefaultServerUrl = () => {
+  // Vite environment variable for cloud deployments
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  // Default for desktop/local development
+  return 'http://127.0.0.1:17493';
+};
+
 interface ServerStore {
   serverUrl: string;
   setServerUrl: (url: string) => void;
@@ -18,7 +28,7 @@ interface ServerStore {
 export const useServerStore = create<ServerStore>()(
   persist(
     (set) => ({
-      serverUrl: 'http://127.0.0.1:17493',
+      serverUrl: getDefaultServerUrl(),
       setServerUrl: (url) => set({ serverUrl: url }),
 
       isConnected: false,

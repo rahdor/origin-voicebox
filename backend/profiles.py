@@ -10,21 +10,39 @@ from pathlib import Path
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-from .models import (
-    VoiceProfileCreate,
-    VoiceProfileResponse,
-    ProfileSampleCreate,
-    ProfileSampleResponse,
-)
-from .database import (
-    VoiceProfile as DBVoiceProfile,
-    ProfileSample as DBProfileSample,
-)
-from .utils.audio import validate_reference_audio, load_audio, save_audio
-from .utils.images import validate_image, process_avatar
-from .utils.cache import _get_cache_dir, clear_profile_cache
-from .tts import get_tts_model
-from . import config
+# Support both package imports (local dev) and direct imports (cloud deployment)
+try:
+    from .models import (
+        VoiceProfileCreate,
+        VoiceProfileResponse,
+        ProfileSampleCreate,
+        ProfileSampleResponse,
+    )
+    from .database import (
+        VoiceProfile as DBVoiceProfile,
+        ProfileSample as DBProfileSample,
+    )
+    from .utils.audio import validate_reference_audio, load_audio, save_audio
+    from .utils.images import validate_image, process_avatar
+    from .utils.cache import _get_cache_dir, clear_profile_cache
+    from .tts import get_tts_model
+    from . import config
+except ImportError:
+    from models import (
+        VoiceProfileCreate,
+        VoiceProfileResponse,
+        ProfileSampleCreate,
+        ProfileSampleResponse,
+    )
+    from database import (
+        VoiceProfile as DBVoiceProfile,
+        ProfileSample as DBProfileSample,
+    )
+    from utils.audio import validate_reference_audio, load_audio, save_audio
+    from utils.images import validate_image, process_avatar
+    from utils.cache import _get_cache_dir, clear_profile_cache
+    from tts import get_tts_model
+    import config
 
 
 def _get_profiles_dir() -> Path:

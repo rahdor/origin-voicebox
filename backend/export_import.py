@@ -12,11 +12,17 @@ from pathlib import Path
 from typing import Optional
 from sqlalchemy.orm import Session
 
-from .models import VoiceProfileResponse
-from .database import VoiceProfile as DBVoiceProfile, ProfileSample as DBProfileSample, Generation as DBGeneration
-from .profiles import create_profile, add_profile_sample
-from .models import VoiceProfileCreate
-from . import config
+# Support both package imports (local dev) and direct imports (cloud deployment)
+try:
+    from .models import VoiceProfileResponse, VoiceProfileCreate
+    from .database import VoiceProfile as DBVoiceProfile, ProfileSample as DBProfileSample, Generation as DBGeneration
+    from .profiles import create_profile, add_profile_sample
+    from . import config
+except ImportError:
+    from models import VoiceProfileResponse, VoiceProfileCreate
+    from database import VoiceProfile as DBVoiceProfile, ProfileSample as DBProfileSample, Generation as DBGeneration
+    from profiles import create_profile, add_profile_sample
+    import config
 
 
 def _get_profiles_dir() -> Path:

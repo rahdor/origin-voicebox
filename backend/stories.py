@@ -10,19 +10,35 @@ from pathlib import Path
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
-from .models import (
-    StoryCreate,
-    StoryResponse,
-    StoryDetailResponse,
-    StoryItemDetail,
-    StoryItemCreate,
-    StoryItemBatchUpdate,
-    StoryItemMove,
-    StoryItemTrim,
-    StoryItemSplit,
-)
-from .database import Story as DBStory, StoryItem as DBStoryItem, Generation as DBGeneration, VoiceProfile as DBVoiceProfile
-from .utils.audio import load_audio, save_audio
+# Support both package imports (local dev) and direct imports (cloud deployment)
+try:
+    from .models import (
+        StoryCreate,
+        StoryResponse,
+        StoryDetailResponse,
+        StoryItemDetail,
+        StoryItemCreate,
+        StoryItemBatchUpdate,
+        StoryItemMove,
+        StoryItemTrim,
+        StoryItemSplit,
+    )
+    from .database import Story as DBStory, StoryItem as DBStoryItem, Generation as DBGeneration, VoiceProfile as DBVoiceProfile
+    from .utils.audio import load_audio, save_audio
+except ImportError:
+    from models import (
+        StoryCreate,
+        StoryResponse,
+        StoryDetailResponse,
+        StoryItemDetail,
+        StoryItemCreate,
+        StoryItemBatchUpdate,
+        StoryItemMove,
+        StoryItemTrim,
+        StoryItemSplit,
+    )
+    from database import Story as DBStory, StoryItem as DBStoryItem, Generation as DBGeneration, VoiceProfile as DBVoiceProfile
+    from utils.audio import load_audio, save_audio
 import numpy as np
 
 

@@ -9,7 +9,11 @@ from datetime import datetime
 import uuid
 from pathlib import Path
 
-from . import config
+# Support both package imports (local dev) and direct imports (cloud deployment)
+try:
+    from . import config
+except ImportError:
+    import config
 
 Base = declarative_base()
 

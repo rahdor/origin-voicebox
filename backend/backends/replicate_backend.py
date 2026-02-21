@@ -26,7 +26,7 @@ class ReplicateTTSBackend:
         self._loaded = False
         self._client = None
 
-    async def load_model(self, model_size: str = "1.7b") -> None:
+    async def load_model_async(self, model_size: str = "1.7b") -> None:
         """
         Initialize Replicate client.
         Model runs on Replicate's GPUs, no local loading needed.
@@ -40,6 +40,9 @@ class ReplicateTTSBackend:
 
         self._client = replicate.Client(api_token=api_token)
         self._loaded = True
+
+    # Alias for compatibility
+    load_model = load_model_async
 
     async def create_voice_prompt(
         self,
@@ -108,7 +111,7 @@ class ReplicateTTSBackend:
     ) -> Tuple[np.ndarray, int]:
         """Generate audio using Replicate's Qwen3-TTS."""
         if not self._loaded:
-            await self.load_model()
+            await self.load_model_async()
 
         input_data = {
             "text": text,
@@ -187,8 +190,11 @@ class ReplicateSTTBackend:
     def __init__(self):
         self._loaded = False
 
-    async def load_model(self, model_size: str = "base") -> None:
+    async def load_model_async(self, model_size: str = "base") -> None:
         self._loaded = True
+
+    # Alias for compatibility
+    load_model = load_model_async
 
     async def transcribe(
         self,
