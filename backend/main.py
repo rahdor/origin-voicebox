@@ -86,7 +86,69 @@ async def shutdown():
 @app.get("/version")
 async def version():
     """Version endpoint for deployment verification."""
-    return {"version": "2026-02-21-v5", "deployed_at": "2026-02-22T03:20:00Z"}
+    return {"version": "2026-02-21-v14", "deployed_at": "2026-02-22T05:25:00Z"}
+
+
+@app.get("/debug/replicate-test")
+async def debug_replicate_test():
+    """Test Replicate API with known working URL."""
+    import os
+    import replicate
+
+    try:
+        token = os.environ.get("REPLICATE_API_TOKEN") or os.environ.get("REPLICATE_API_KEY")
+        if not token:
+            return {"error": "No REPLICATE_API_TOKEN found"}
+
+        client = replicate.Client(api_token=token)
+
+        # Test with base64 audio (URLs may be geo-blocked from Replicate servers)
+        import base64
+        test_audio_path = Path(__file__).parent.parent / "test_voice.wav"
+        if test_audio_path.exists():
+            with open(test_audio_path, "rb") as f:
+                audio_base64 = base64.b64encode(f.read()).decode("utf-8")
+            ref_audio = f"data:audio/wav;base64,{audio_base64}"
+        else:
+            # Fallback to URL (may not work due to geo-blocking)
+            ref_audio = "https://qianwen-res.oss-cn-beijing.aliyuncs.com/Qwen3-TTS-Repo/clone.wav"
+
+        output = client.run(
+            "qwen/qwen3-tts",
+            input={
+                "text": "Hello test",
+                "mode": "voice_clone",
+                "reference_audio": ref_audio,
+                "reference_text": "This is the reference text for voice cloning."
+            }
+        )
+        return {"success": True, "output_type": str(type(output)), "output": str(output)[:500]}
+    except Exception as e:
+        return {"error": f"{type(e).__name__}: {str(e)}"}
+
+
+@app.get("/debug/replicate-test2")
+async def debug_replicate_test2():
+    """Test with custom_voice mode."""
+    import os
+    import replicate
+
+    try:
+        token = os.environ.get("REPLICATE_API_TOKEN") or os.environ.get("REPLICATE_API_KEY")
+        client = replicate.Client(api_token=token)
+
+        # Test custom_voice mode without reference audio
+        output = client.run(
+            "qwen/qwen3-tts",
+            input={
+                "text": "Hello this is a test",
+                "mode": "custom_voice",
+                "language": "English"
+            }
+        )
+        return {"success": True, "output_type": str(type(output)), "output": str(output)[:500]}
+    except Exception as e:
+        return {"error": f"{type(e).__name__}: {str(e)}"}
 
 
 @app.get("/health", response_model=models.HealthResponse)
@@ -577,12 +639,6 @@ async def generate_speech(
             data.profile_id,
             db,
         )
-
-        # Debug logging
-        print(f"DEBUG: voice_prompt keys: {voice_prompt.keys() if voice_prompt else 'None'}")
-        print(f"DEBUG: has audio_base64: {'audio_base64' in voice_prompt if voice_prompt else False}")
-        if voice_prompt and 'audio_base64' in voice_prompt:
-            print(f"DEBUG: audio_base64 length: {len(voice_prompt['audio_base64'])}")
 
         # Generate audio
         tts_model = tts.get_tts_model()

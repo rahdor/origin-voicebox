@@ -110,49 +110,45 @@ class ReplicateTTSBackend:
         instruct: Optional[str] = None,
     ) -> Tuple[np.ndarray, int]:
         """Generate audio using Replicate's Qwen3-TTS."""
-        print(f"DEBUG replicate generate v2: voice_prompt type={type(voice_prompt)}")
-        print(f"DEBUG replicate generate: voice_prompt keys={voice_prompt.keys() if voice_prompt else 'None'}")
-        print(f"DEBUG replicate generate: has audio_base64={voice_prompt.get('audio_base64') is not None if voice_prompt else False}")
-
         if not self._loaded:
             await self.load_model_async()
 
         # Validate voice_prompt has required audio data
         if not voice_prompt.get("audio_base64"):
-            print(f"DEBUG replicate generate: FAILING - audio_base64 value={voice_prompt.get('audio_base64')}")
-            raise ValueError("DEPLOY_V5: No audio_base64 in voice_prompt")
+            raise ValueError("No audio_base64 in voice_prompt - ensure profile has audio samples")
 
-        print("DEBUG replicate generate: validation passed, building input_data")
-
-        # Use data URI format for reference audio
+        # Decode audio from base64 and save to temp file
         audio_base64 = voice_prompt['audio_base64']
-        mime_type = voice_prompt.get("audio_mime_type", "audio/wav")
-        ref_audio_uri = f"data:{mime_type};base64,{audio_base64}"
-        print(f"DEBUG replicate generate: ref_audio_uri length={len(ref_audio_uri)}")
+        audio_bytes = base64.b64decode(audio_base64)
+
+        # Save to temp file and pass file handle to Replicate
+        temp_file = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+        temp_file.write(audio_bytes)
+        temp_file.flush()
+        temp_path = temp_file.name
+        temp_file.close()
+
+        ref_audio_file = open(temp_path, "rb")
 
         input_data = {
             "text": text,
-            "mode": "voice_clone",  # Valid modes: custom_voice, voice_clone, voice_design
-            "ref_audio": ref_audio_uri,
+            "mode": "voice_clone",
+            "reference_audio": ref_audio_file,
         }
 
         if voice_prompt.get("reference_text"):
-            input_data["ref_text"] = voice_prompt["reference_text"]
+            input_data["reference_text"] = voice_prompt["reference_text"]
 
         if seed is not None:
             input_data["seed"] = seed
 
-        print(f"DEBUG replicate generate: input_data keys={input_data.keys()}")
-        print(f"DEBUG replicate generate: mode={input_data['mode']}")
-        print(f"DEBUG replicate generate: calling _run_replicate with text={text[:50]}")
         try:
             output = await self._run_replicate(input_data)
-            print(f"DEBUG replicate generate: got output type={type(output)}")
             audio_array, sample_rate = await self._download_audio(output)
-            print(f"DEBUG replicate generate: download complete, sr={sample_rate}")
-        except Exception as e:
-            print(f"DEBUG replicate generate: ERROR - {type(e).__name__}: {e}")
-            raise
+        finally:
+            # Clean up temp file
+            ref_audio_file.close()
+            os.unlink(temp_path)
 
         return audio_array, sample_rate
 
