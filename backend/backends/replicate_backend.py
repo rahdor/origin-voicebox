@@ -132,7 +132,7 @@ class ReplicateTTSBackend:
 
         input_data = {
             "text": text,
-            "mode": "Clone",  # Replicate expects "Clone" not "voice_clone"
+            "mode": "voice_clone",  # Valid modes: custom_voice, voice_clone, voice_design
             "ref_audio": ref_audio_uri,
         }
 
