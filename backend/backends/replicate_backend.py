@@ -165,21 +165,30 @@ class ReplicateTTSBackend:
         return output
 
     async def _download_audio(self, output) -> Tuple[np.ndarray, int]:
-        """Download audio from Replicate output URL."""
-        if isinstance(output, str):
-            audio_url = output
+        """Download audio from Replicate output URL or process raw bytes."""
+        # Handle raw bytes output (some Replicate models return audio directly)
+        if isinstance(output, bytes):
+            audio_bytes = output
+        elif isinstance(output, str):
+            # It's a URL, download it
+            async with httpx.AsyncClient() as client:
+                response = await client.get(output, timeout=60.0)
+                response.raise_for_status()
+                audio_bytes = response.content
         elif hasattr(output, '__iter__'):
-            audio_url = list(output)[0] if output else None
+            # Could be an iterator/generator - get first item
+            first_item = list(output)[0] if output else None
+            if isinstance(first_item, bytes):
+                audio_bytes = first_item
+            elif isinstance(first_item, str):
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(first_item, timeout=60.0)
+                    response.raise_for_status()
+                    audio_bytes = response.content
+            else:
+                raise ValueError(f"Unexpected output type from Replicate: {type(first_item)}")
         else:
-            audio_url = str(output)
-
-        if not audio_url:
-            raise ValueError("No audio URL returned from Replicate")
-
-        async with httpx.AsyncClient() as client:
-            response = await client.get(audio_url, timeout=60.0)
-            response.raise_for_status()
-            audio_bytes = response.content
+            raise ValueError(f"Unexpected output type from Replicate: {type(output)}")
 
         audio_array, sample_rate = sf.read(io.BytesIO(audio_bytes))
 
