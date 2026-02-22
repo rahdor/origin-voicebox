@@ -110,7 +110,7 @@ class ReplicateTTSBackend:
         instruct: Optional[str] = None,
     ) -> Tuple[np.ndarray, int]:
         """Generate audio using Replicate's Qwen3-TTS."""
-        print(f"DEBUG replicate generate: voice_prompt type={type(voice_prompt)}")
+        print(f"DEBUG replicate generate v2: voice_prompt type={type(voice_prompt)}")
         print(f"DEBUG replicate generate: voice_prompt keys={voice_prompt.keys() if voice_prompt else 'None'}")
         print(f"DEBUG replicate generate: has audio_base64={voice_prompt.get('audio_base64') is not None if voice_prompt else False}")
 
@@ -120,7 +120,7 @@ class ReplicateTTSBackend:
         # Validate voice_prompt has required audio data
         if not voice_prompt.get("audio_base64"):
             print(f"DEBUG replicate generate: FAILING - audio_base64 value={voice_prompt.get('audio_base64')}")
-            raise ValueError("Reference audio is required for voice_clone mode")
+            raise ValueError("No audio_base64 in voice_prompt - reference audio required")
 
         print("DEBUG replicate generate: validation passed, building input_data")
 
