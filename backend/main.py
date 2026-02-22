@@ -86,7 +86,7 @@ async def shutdown():
 @app.get("/version")
 async def version():
     """Version endpoint for deployment verification."""
-    return {"version": "2026-02-21-v4", "deployed_at": "2026-02-22T03:15:00Z"}
+    return {"version": "2026-02-21-v5", "deployed_at": "2026-02-22T03:20:00Z"}
 
 
 @app.get("/health", response_model=models.HealthResponse)

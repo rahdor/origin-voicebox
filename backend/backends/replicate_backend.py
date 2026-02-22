@@ -120,7 +120,7 @@ class ReplicateTTSBackend:
         # Validate voice_prompt has required audio data
         if not voice_prompt.get("audio_base64"):
             print(f"DEBUG replicate generate: FAILING - audio_base64 value={voice_prompt.get('audio_base64')}")
-            raise ValueError("No audio_base64 in voice_prompt - reference audio required")
+            raise ValueError("DEPLOY_V5: No audio_base64 in voice_prompt")
 
         print("DEBUG replicate generate: validation passed, building input_data")
 
