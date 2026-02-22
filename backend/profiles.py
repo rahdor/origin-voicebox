@@ -374,6 +374,10 @@ async def create_voice_prompt_for_profile(
     if len(samples) == 1:
         # Single sample - use directly
         sample = samples[0]
+        print(f"DEBUG profiles: sample.id={sample.id}")
+        print(f"DEBUG profiles: sample.audio_data type={type(sample.audio_data)}")
+        print(f"DEBUG profiles: sample.audio_data is None={sample.audio_data is None}")
+        print(f"DEBUG profiles: sample.audio_data truthy={bool(sample.audio_data)}")
 
         # For cloud deployments, prefer stored audio_data over file path
         # This handles ephemeral filesystems where files may not persist
