@@ -83,6 +83,12 @@ async def shutdown():
     return {"message": "Shutting down..."}
 
 
+@app.get("/version")
+async def version():
+    """Version endpoint for deployment verification."""
+    return {"version": "2026-02-21-v2", "deployed_at": "2026-02-21T21:30:00Z"}
+
+
 @app.get("/health", response_model=models.HealthResponse)
 async def health():
     """Health check endpoint."""
@@ -571,7 +577,13 @@ async def generate_speech(
             data.profile_id,
             db,
         )
-        
+
+        # Debug logging
+        print(f"DEBUG: voice_prompt keys: {voice_prompt.keys() if voice_prompt else 'None'}")
+        print(f"DEBUG: has audio_base64: {'audio_base64' in voice_prompt if voice_prompt else False}")
+        if voice_prompt and 'audio_base64' in voice_prompt:
+            print(f"DEBUG: audio_base64 length: {len(voice_prompt['audio_base64'])}")
+
         # Generate audio
         tts_model = tts.get_tts_model()
         # Load the requested model size if different from current (async to not block)
