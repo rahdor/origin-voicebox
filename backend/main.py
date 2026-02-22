@@ -86,7 +86,7 @@ async def shutdown():
 @app.get("/version")
 async def version():
     """Version endpoint for deployment verification."""
-    return {"version": "2026-02-21-v14", "deployed_at": "2026-02-22T05:25:00Z"}
+    return {"version": "2026-02-21-v15", "deployed_at": "2026-02-22T05:35:00Z"}
 
 
 @app.get("/debug/replicate-test")
