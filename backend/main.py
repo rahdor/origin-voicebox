@@ -689,7 +689,10 @@ async def generate_speech(
         # Save audio
         audio_path = config.get_generations_dir() / f"{generation_id}.wav"
 
-        from .utils.audio import save_audio
+        try:
+            from .utils.audio import save_audio
+        except ImportError:
+            from utils.audio import save_audio
         save_audio(audio, str(audio_path), sample_rate)
 
         # Create history entry
@@ -901,7 +904,10 @@ async def transcribe_audio(
     
     try:
         # Get audio duration
-        from .utils.audio import load_audio
+        try:
+            from .utils.audio import load_audio
+        except ImportError:
+            from utils.audio import load_audio
         audio, sr = load_audio(tmp_path)
         duration = len(audio) / sr
         
@@ -1180,7 +1186,10 @@ async def get_audio(generation_id: str, db: Session = Depends(get_db)):
 @app.get("/samples/{sample_id}")
 async def get_sample_audio(sample_id: str, db: Session = Depends(get_db)):
     """Serve profile sample audio file."""
-    from .database import ProfileSample as DBProfileSample
+    try:
+        from .database import ProfileSample as DBProfileSample
+    except ImportError:
+        from database import ProfileSample as DBProfileSample
     
     sample = db.query(DBProfileSample).filter_by(id=sample_id).first()
     if not sample:
