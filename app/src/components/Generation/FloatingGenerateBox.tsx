@@ -170,20 +170,24 @@ export function FloatingGenerateBox({
     <motion.div
       ref={containerRef}
       className={cn(
-        'fixed right-auto',
+        'fixed right-auto z-40',
+        // Mobile: full width with padding, above bottom nav
+        'left-4 right-4 md:right-auto',
+        // Desktop: original positioning
         isStoriesRoute
-          ? // Position aligned with story list: after sidebar + padding, width 360px
-            'left-[calc(5rem+2rem)] w-[360px]'
-          : 'left-[calc(5rem+2rem)] w-[calc((100%-5rem-4rem)/2-1rem)]',
+          ? 'md:left-[calc(5rem+2rem)] md:w-[360px]'
+          : 'md:left-[calc(5rem+2rem)] md:w-[calc((100%-5rem-4rem)/2-1rem)]',
       )}
       style={{
-        // On stories route: offset by track editor height when visible
-        // On other routes: offset by audio player height when visible
+        // Mobile: above bottom nav (64px + padding)
+        // Desktop: original behavior
         bottom: hasTrackEditor
           ? `${trackEditorHeight + 24}px`
           : isPlayerOpen
             ? 'calc(7rem + 1.5rem)'
-            : '1.5rem',
+            : window.innerWidth < 768
+              ? '5.5rem' // Above mobile bottom nav
+              : '1.5rem',
       }}
     >
       <motion.div
