@@ -176,11 +176,17 @@ class ReplicateTTSBackend:
                 response.raise_for_status()
                 audio_bytes = response.content
         elif hasattr(output, '__iter__'):
-            # Could be an iterator/generator - get first item
-            first_item = list(output)[0] if output else None
+            # Could be an iterator/generator yielding chunks or items
+            items = list(output)
+            if not items:
+                raise ValueError("Empty output from Replicate")
+
+            first_item = items[0]
             if isinstance(first_item, bytes):
-                audio_bytes = first_item
+                # Join all byte chunks together
+                audio_bytes = b''.join(items)
             elif isinstance(first_item, str):
+                # It's a URL
                 async with httpx.AsyncClient() as client:
                     response = await client.get(first_item, timeout=60.0)
                     response.raise_for_status()
