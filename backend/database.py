@@ -130,19 +130,31 @@ _db_path = None
 def init_db():
     """Initialize database tables."""
     global engine, SessionLocal, _db_path
+    import os
 
-    _db_path = config.get_db_path()
-    _db_path.parent.mkdir(parents=True, exist_ok=True)
+    # Check for DATABASE_URL (Postgres) or fall back to SQLite
+    database_url = os.environ.get("DATABASE_URL")
 
-    engine = create_engine(
-        f"sqlite:///{_db_path}",
-        connect_args={"check_same_thread": False},
-    )
+    if database_url:
+        # Use Postgres
+        print(f"Using Postgres database")
+        engine = create_engine(database_url)
+        _db_path = None
+    else:
+        # Fall back to SQLite for local dev
+        _db_path = config.get_db_path()
+        _db_path.parent.mkdir(parents=True, exist_ok=True)
+        print(f"Using SQLite database at {_db_path}")
+        engine = create_engine(
+            f"sqlite:///{_db_path}",
+            connect_args={"check_same_thread": False},
+        )
 
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     
-    # Run migrations before creating tables
-    _run_migrations(engine)
+    # Run migrations before creating tables (SQLite only - Postgres gets fresh tables)
+    if not database_url:
+        _run_migrations(engine)
     
     Base.metadata.create_all(bind=engine)
     
